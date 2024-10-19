@@ -1,0 +1,38 @@
+<head>
+    <title>Sched-Classical</title>
+    <style>
+        button {
+            width: 70px;
+            height: 20px;
+        }
+        th, td {
+            border: solid black 1px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Classical task scheduling simulator | <a href="/">reset</a></h2><form action="/" method="post">
+    Number of machines working in parallel: 1; Number of jobs (1-20): 
+        <input type="number" name="njobs" step="1" min="1" max="20" value="{{site.njobs}}">
+        <input type="submit" name="task" value="Next step"> <br>
+    Job processing time: <br>
+    {% for i,jt in site.tmap.items() %}
+        <b>Job {{i+1}}: </b><input type="number" name="jt_{{i}}" value="{{jt}}" step="1" min="1" max="999">; 
+    {% endfor %} <br>
+    Optimization criteria: deadline avoidance;
+    <input type="submit" name="tproc" value="Next step"> <br>
+    {% if site.jseq %}
+        Move one job to the front/back of another by clicking in order: <br>
+    <table><tr><th>Ordering</th>
+        {% for i,jt in jseq %} <th>
+            <button type="submit" name="move" style="{% if jt[1] %}background-color: skyblue;{% endif %}" value="{{i}}">
+                <b style="color: blue;">[{{jt[0]+1}}] </b>t={{site.tmap[jt[0]]}}</button></th>
+        {% endfor %}</tr> {% for row in site.table %} <tr>
+            {% for entry in row %} <td>{{entry}}</td> {% endfor %}
+        </tr> {% endfor %}
+    </table>
+    {% endif %}
+
+
+    </form>
+</body>
