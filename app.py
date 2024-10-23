@@ -6,18 +6,19 @@ app = Flask(__name__)
 class Website:
     def __init__(self):
         self.njobs = 5
-        self.jseq = []
-        self.tmap = {}
+        self.jseq, self.tmap = [],[]
         self.mvi = -1
         self.table = []
 
     def stats(self):
         if self.mvi < 0:
             tcomp = 0
-            table = [["Completion"]]
+            table = []
+            stat = ["Completion"]
             for jt in self.jseq:
-                tcomp += self.tmap[jt[0]]
-                table[0].append(tcomp)
+                tcomp += site.tmap[0][jt[0]+1][1]
+                stat.append(tcomp)
+            table.append(stat)
             self.table = table
 
 site = Website()
@@ -29,12 +30,17 @@ def index():
     print(fm)
     if fm.get("task"):
         site.njobs = int(fm.get("njobs"))
-        site.tmap = {i: 5 for i in range(site.njobs)}
+        site.tmap = [[("Processing time", "pr", 1,999,1)]+[[i, 5] for i in range(site.njobs)]]
+        if fm.get("weight"):
+            site.tmap.append([("Weight", "wt", 0, 999, 0.01)] + [[i, 0] for i in range(site.njobs)])
+        if fm.get("deadline"):
+            site.tmap.append([("Deadline", "dl", 1,999,1)] + [[i, 8+3*i] for i in range(site.njobs)])
         site.jseq = []
     elif fm.get("tproc"):
-        for i in site.tmap.keys():
-            t = int(fm.get(f"jt_{i}"))
-            site.tmap[i] = t
+        for row in site.tmap:
+            for i in range(site.njobs):
+                t = int(fm.get(f"{row[0][1]}_{i}"))
+                row[i+1][1] = t
         if not site.jseq:
             site.jseq = [[i, False] for i in range(site.njobs)]
         site.stats()

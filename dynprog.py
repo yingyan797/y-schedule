@@ -77,5 +77,6 @@ if __name__ == "__main__":
     t = Task([4,3,7,2,2]*4, [5,6,8,8,17]*4)
     # print(t.tree_limsearch())
     # t = Task([5,6,9,8,7]*3, range(9, 69, 4))
-    print(t.allcomb_search())
+    # print(t.allcomb_search())
+    print({1:0}.items())
 

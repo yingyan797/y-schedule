@@ -12,27 +12,33 @@
 </head>
 <body>
     <h2>Classical task scheduling simulator | <a href="/">reset</a></h2><form action="/" method="post">
-    Number of machines working in parallel: 1; Number of jobs (1-20): 
-        <input type="number" name="njobs" step="1" min="1" max="20" value="{{site.njobs}}">
-        <input type="submit" name="task" value="Next step"> <br>
-    Job processing time: <br>
-    {% for i,jt in site.tmap.items() %}
-        <b>Job {{i+1}}: </b><input type="number" name="jt_{{i}}" value="{{jt}}" step="1" min="1" max="999">; 
-    {% endfor %} <br>
-    Optimization criteria: deadline avoidance;
-    <input type="submit" name="tproc" value="Next step"> <br>
-    {% if site.jseq %}
+    Number of machines working in parallel: 1; <br>
+    Number of jobs (1-20): <input type="number" name="njobs" step="1" min="1" max="20" value="{{site.njobs}}"> <br>
+    Optional parameters: <input type="checkbox" name="weight">Weight/priority; 
+    <input type="checkbox" name="deadline">Deadline; <input type="submit" name="task" value="Next step"> <br>   
+    Job processing time and parameters: <table> <tr id="njobs"></tr>
+    {% for row in site.tmap %}
+        <tr><th>{{row[0][0]}}</th> {% for nval in row[1:] %} <td><input type="number" name="{{row[0][1]}}_{{nval[0]}}" 
+            value="{{nval[1]}}" step="{{row[0][4]}}" min="{{row[0][2]}}" max="{{row[0][3]}}"></td> {% endfor %}</tr>
+    {% endfor %} </table><br>
+        <input type="submit" name="tproc" value="Next step"> <br>
+        {% if site.jseq %}
         Move one job to the front/back of another by clicking in order: <br>
     <table><tr><th>Ordering</th>
         {% for i,jt in jseq %} <th>
             <button type="submit" name="move" style="{% if jt[1] %}background-color: skyblue;{% endif %}" value="{{i}}">
-                <b style="color: blue;">[{{jt[0]+1}}] </b>t={{site.tmap[jt[0]]}}</button></th>
+                <b style="color: blue;">[{{jt[0]+1}}] </b>t={{site.tmap[0][jt[0]+1][1]}}</button></th>
         {% endfor %}</tr> {% for row in site.table %} <tr>
             {% for entry in row %} <td>{{entry}}</td> {% endfor %}
         </tr> {% endfor %}
     </table>
     {% endif %}
-
-
     </form>
+    <script>
+        var jnums = "<td>Job id</td>", i;
+        for (i=1; i<={{site.njobs}}; i++) {
+            jnums = jnums + "<td>" + i + "</td>"
+            document.getElementById("njobs").innerHTML = jnums;
+        }
+    </script>
 </body>
