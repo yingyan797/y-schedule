@@ -28,7 +28,7 @@
         {% for i,jt in jseq %} <th>
             <button type="submit" name="move" style="{% if jt[1] %}background-color: skyblue;{% endif %}" value="{{i}}">
                 <b style="color: blue;">[{{jt[0]+1}}] </b>t={{site.tmap[0][jt[0]+1][1]}}</button></th>
-        {% endfor %}</tr> {% for row in site.table %} <tr>
+        {% endfor %} <th>Row sum</th> </tr> {% for row in site.table %} <tr>
             {% for entry in row %} <td>{{entry}}</td> {% endfor %}
         </tr> {% endfor %}
     </table>
@@ -38,7 +38,7 @@
         var jnums = "<td>Job id</td>", i;
         for (i=1; i<={{site.njobs}}; i++) {
             jnums = jnums + "<td>" + i + "</td>"
-            document.getElementById("njobs").innerHTML = jnums;
         }
+        document.getElementById("njobs").innerHTML = jnums;
     </script>
 </body>

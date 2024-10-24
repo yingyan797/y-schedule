@@ -6,7 +6,7 @@ app = Flask(__name__)
 class Website:
     def __init__(self):
         self.njobs = 5
-        self.jseq, self.tmap = [],[]
+        self.jseq, self.tmap, self.metrics = [],[],{}
         self.mvi = -1
         self.table = []
 
@@ -19,6 +19,26 @@ class Website:
                 tcomp += site.tmap[0][jt[0]+1][1]
                 stat.append(tcomp)
             table.append(stat)
+            if "wt" in self.metrics:
+                m = self.metrics["wt"]
+                wsc = ["Weight compl."]
+                ws = ["Weight"]
+                for jt in self.jseq:
+                    ws.append(self.tmap[m][jt[0]+1][1])
+                    wsc.append(stat[jt[0]+1] * ws[-1])
+                wsc.append(sum(wsc[1:]))
+                table += [ws+["N/a"], wsc]
+                stat.append("N/a")
+            else:
+                stat.append(sum(stat[1:]))
+            if "dl" in self.metrics:
+                m = self.metrics["dl"]
+                tardy = ["Tardiness"]
+                for jt in self.jseq:
+                    tardy.append(max(0, stat[jt[0]+1] - self.tmap[m][jt[0]+1][1]))
+                tardy.append(sum(tardy[1:]))
+                table.append(tardy)
+
             self.table = table
 
 site = Website()
@@ -30,11 +50,14 @@ def index():
     print(fm)
     if fm.get("task"):
         site.njobs = int(fm.get("njobs"))
-        site.tmap = [[("Processing time", "pr", 1,999,1)]+[[i, 5] for i in range(site.njobs)]]
+        site.tmap = [[("Processing time", "pr", 1,999,1)]+[[i, 5+i%3] for i in range(site.njobs)]]
+        site.metrics["pr"] = len(site.metrics)
         if fm.get("weight"):
-            site.tmap.append([("Weight", "wt", 0, 999, 0.01)] + [[i, 0] for i in range(site.njobs)])
+            site.tmap.append([("Weight", "wt", 0, 999, 0.01)] + [[i, 1+i%2] for i in range(site.njobs)])
+            site.metrics["wt"] = len(site.metrics)
         if fm.get("deadline"):
             site.tmap.append([("Deadline", "dl", 1,999,1)] + [[i, 8+3*i] for i in range(site.njobs)])
+            site.metrics["dl"] = len(site.metrics)
         site.jseq = []
     elif fm.get("tproc"):
         for row in site.tmap:
